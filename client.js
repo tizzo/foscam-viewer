@@ -8,12 +8,21 @@ var keyMapping = {
   40: 'down',
 }
 
+var sendCommand = function(command) {
+  $.ajax({
+    // The app sets this as a global variable.
+    url: window.controlUrl,
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({ action: command }),
+  });
+}
+
 var keyHandler = function(action, e) {
   var key = e.which;
 
   if (!keyMapping[key]) return;
   if (action == 'down' && downKeys[key]) return;
-  console.log(action == 'down', downKeys[key], downKeys);
 
   if (action == 'down') {
     downKeys[key] = true;
@@ -24,19 +33,41 @@ var keyHandler = function(action, e) {
 
   var direction = keyMapping[key];
 
-  //console.log('direction', direction, 'action', action);
   var command = (action == 'down') ? '' : 'stop ';
-  //console.log('command', command);
-  //*
-  $.ajax({
-    url: 'foscam/control',
-    type: 'POST',
-    contentType: 'application/json',
-    data: JSON.stringify({ action: command + direction }),
-    success: function() { console.log(arguments) },
-    failure: function() { console.log(arguments) },
-  });
-  //*/
+  command += direction;
+
+  sendCommand(command);
+  
 }
+
 $(document).keydown(keyHandler.bind(null, 'down'));
 $(document).keyup(keyHandler.bind(null, 'up'));
+
+Zepto(function($){
+
+  var startHandler = function(e) {
+    sendCommand($(this).attr('id'));
+  };
+
+  var stopHandler = function(e) {
+    sendCommand('stop ' + $(this).attr('id'));
+  };
+
+  var $controls = $('div#controls');
+
+  $('#ir-on').click(function() { sendCommand('io output high'); });
+  $('#ir-off').click(function() { sendCommand('io output low'); });
+
+  $('#arrows a i', $controls).each(function() {
+    var element = document.getElementById($(this).attr('id'));
+    // There may be a better way, but for now detect whether we are on mobile.
+    if ('ontouchstart' in document.documentElement) {
+      element.addEventListener('touchstart', startHandler);
+      element.addEventListener('touchend', stopHandler);
+    }
+    else {
+      element.addEventListener('mouseup', stopHandler);
+      element.addEventListener('mousedown', startHandler);
+    }
+  });
+});
