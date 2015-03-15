@@ -97,7 +97,7 @@ app.post config.pathPrefix + '/control', bodyParser.json(), (req, res)->
 app.get config.pathPrefix + '/script.js', (req, res)->
   res.writeHead 200,
     'Content-Type': 'application/javascript'
-  fs.createReadStream 'client.js'
+  fs.createReadStream __dirname + '/client.js'
     .pipe res
 
 app.listen config.port, ->

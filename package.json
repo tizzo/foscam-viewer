@@ -1,6 +1,6 @@
 {
   "name": "foscam-viewer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A simple mobile friendly node app to view and control a Foscam web cam.",
   "repository": "git@github.com:tizzo/foscam-viewer.git",
   "main": "index.js",
