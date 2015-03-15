@@ -1,3 +1,4 @@
+#! /usr/bin/env coffee
 fs = require 'fs'
 express = require 'express'
 bodyParser = require 'body-parser'
