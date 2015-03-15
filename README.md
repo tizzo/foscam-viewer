@@ -6,6 +6,12 @@ is to provide a simple mobile friendly application to view a foscam camera strea
 
 ## Compatibility
 
+### Known Issues
+
+Streaming mjpgs do not seem to work on mobile Chrome for iOS at present. Mobile Safari has been tested and at the time of writing currently works, but according to the Internet apple has broken or disabled it in the past. 
+
+### Cameras
+
 This app has only been tested with the [FI8910W](http://foscam.us/products/foscam-fi8910w-wireless-ip-camera.html) model but will likely work with most foscam models that expose video via [MJPEG](http://en.wikipedia.org/wiki/Motion_JPEG).  This would likely not include newer HD models that stream H264, though pull requests to add that are most welcome.
 
 ## Installing and Running
