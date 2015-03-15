@@ -12,5 +12,5 @@ This app has only been tested with the [FI8910W](http://foscam.us/products/fosca
 
   1. Install [node.js and npm](https://nodejs.org/).
   2. Install foscam viewer `sudo npm install -g fosscam-viewer`
-  3. Create a config.yaml ([copy the default]() and edit to taste)
-  4. Run `foscam-viewer /path/to/file`
+  3. Create a config.yaml ([copy the default](https://github.com/tizzo/foscam-viewer/blob/master/default-config.yaml) and edit to taste)
+  4. Run `foscam-viewer /path/to/config.yaml`
