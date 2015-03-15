@@ -2,28 +2,31 @@ fs = require 'fs'
 express = require 'express'
 bodyParser = require 'body-parser'
 MjpegProxy = require('mjpeg-proxy').MjpegProxy
+yaml = require 'js-yaml'
 cam = require 'foscam'
 
-cam.setup
-  host: '192.168.1.6',
-  port: 80,
-  user: 'admin',
-  pass: ''
+configPath = process.argv[2] || __dirname + '/default-config.yaml'
+config = yaml.safeLoad fs.readFileSync configPath
 
-config = {}
-config.prefix = ''
+cam.setup
+  host: config.camera.host
+  port: config.camera.port
+  user: config.camera.user
+  pass: config.camera.pass
 
 app = express()
 
-app.get config.prefix + '/cam.mjpg', new MjpegProxy('http://192.168.1.6/videostream.cgi?user=admin&pwd=').proxyRequest
+baseUrl = "#{config.camera.protocol}://#{config.camera.host}"
+mjpegUrl = "#{baseUrl}/videostream.cgi?user=#{config.camera.user}&pwd=#{config.camera.pass}"
+app.get config.pathPrefix + '/cam.mjpg', new MjpegProxy(mjpegUrl).proxyRequest
 
-app.get config.prefix, (req, res)->
+app.get config.pathPrefix, (req, res)->
   output = "
     <html>
       <head>
-        <script>window.controlUrl = '" + config.prefix + "/control';</script>
+        <script>window.controlUrl = '" + config.pathPrefix + "/control';</script>
         <script src=\"https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.4/zepto.js\"></script>
-        <script src=\"" + config.prefix + "/script.js\"></script>
+        <script src=\"" + config.pathPrefix + "/script.js\"></script>
         <link rel=\"stylesheet\" href=\"//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css\">
         <style>
           a { color: black; }
@@ -47,7 +50,7 @@ app.get config.prefix, (req, res)->
         </style>
       </head>
       <body>
-        <img src=\"" + config.prefix + "/cam.mjpg\" />
+        <img src=\"" + config.pathPrefix + "/cam.mjpg\" />
         <div id=\"controls\">
           <span id=\"arrows\">
             <a href=\"#\"><i id=\"right\" class=\"fa fa-4x fa-arrow-left\"></i></a>
@@ -66,7 +69,7 @@ app.get config.prefix, (req, res)->
   #req.writeHead 200
   res.send output
 
-app.post config.prefix + '/control', bodyParser.json(), (req, res)->
+app.post config.pathPrefix + '/control', bodyParser.json(), (req, res)->
   acceptableAction = [
     'left',
     'stop left',
@@ -90,11 +93,12 @@ app.post config.prefix + '/control', bodyParser.json(), (req, res)->
 
 
 
-app.get config.prefix + '/script.js', (req, res)->
+app.get config.pathPrefix + '/script.js', (req, res)->
   res.writeHead 200,
     'Content-Type': 'application/javascript'
   fs.createReadStream 'client.js'
     .pipe res
 
-app.listen 3000
+app.listen config.port, ->
+  console.log "Now listening on #{config.port}"
 

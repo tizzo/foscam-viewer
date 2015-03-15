@@ -1,0 +1,15 @@
+# The path this app should be located on (go to http://yourhost:yourport/cam1)
+pathPrefix: '/cam1'
+# The port to listen on
+port: 3000
+camera:
+  # The protocol over which to talk to the camera
+  protocol: 'http'
+  # The host or IP of the camera
+  host: '192.168.1.6'
+  # The port the camera listens on
+  port: 80
+  # The username and password used to view/control the camera - needs permission
+  # to move the camera.
+  user: 'admin'
+  pass: ''
